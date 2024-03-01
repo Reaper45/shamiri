@@ -228,16 +228,6 @@ export type GetResidentByIdQueryVariables = Exact<{
 
 export type GetResidentByIdQuery = { __typename?: 'Query', character?: { __typename?: 'Character', id?: string | null, name?: string | null, type?: string | null, created?: string | null, status?: string | null, gender?: string | null, image?: string | null, species?: string | null, episodes: Array<{ __typename?: 'Episode', id?: string | null, episode?: string | null, name?: string | null } | null> } | null };
 
-export type GetResidentsQueryVariables = Exact<{
-  name?: InputMaybe<Scalars['String']['input']>;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  status?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<Scalars['String']['input']>;
-}>;
-
-
-export type GetResidentsQuery = { __typename?: 'Query', characters?: { __typename?: 'Characters', info?: { __typename?: 'Info', count?: number | null, next?: number | null, prev?: number | null, pages?: number | null } | null, results?: Array<{ __typename?: 'Character', id?: string | null, name?: string | null, type?: string | null, created?: string | null, status?: string | null, gender?: string | null, image?: string | null, species?: string | null, origin?: { __typename?: 'Location', name?: string | null } | null } | null> | null } | null };
-
 export const CharacterFragmentDoc = gql`
     fragment character on Character {
   id
@@ -399,57 +389,3 @@ export type GetResidentByIdQueryHookResult = ReturnType<typeof useGetResidentByI
 export type GetResidentByIdLazyQueryHookResult = ReturnType<typeof useGetResidentByIdLazyQuery>;
 export type GetResidentByIdSuspenseQueryHookResult = ReturnType<typeof useGetResidentByIdSuspenseQuery>;
 export type GetResidentByIdQueryResult = Apollo.QueryResult<GetResidentByIdQuery, GetResidentByIdQueryVariables>;
-export const GetResidentsDocument = gql`
-    query GetResidents($name: String, $page: Int, $status: String, $type: String) {
-  characters(page: $page, filter: {name: $name, type: $type, status: $status}) {
-    info {
-      count
-      next
-      prev
-      pages
-    }
-    results {
-      ...character
-      origin {
-        name
-      }
-    }
-  }
-}
-    ${CharacterFragmentDoc}`;
-
-/**
- * __useGetResidentsQuery__
- *
- * To run a query within a React component, call `useGetResidentsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetResidentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetResidentsQuery({
- *   variables: {
- *      name: // value for 'name'
- *      page: // value for 'page'
- *      status: // value for 'status'
- *      type: // value for 'type'
- *   },
- * });
- */
-export function useGetResidentsQuery(baseOptions?: Apollo.QueryHookOptions<GetResidentsQuery, GetResidentsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetResidentsQuery, GetResidentsQueryVariables>(GetResidentsDocument, options);
-      }
-export function useGetResidentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetResidentsQuery, GetResidentsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetResidentsQuery, GetResidentsQueryVariables>(GetResidentsDocument, options);
-        }
-export function useGetResidentsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetResidentsQuery, GetResidentsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetResidentsQuery, GetResidentsQueryVariables>(GetResidentsDocument, options);
-        }
-export type GetResidentsQueryHookResult = ReturnType<typeof useGetResidentsQuery>;
-export type GetResidentsLazyQueryHookResult = ReturnType<typeof useGetResidentsLazyQuery>;
-export type GetResidentsSuspenseQueryHookResult = ReturnType<typeof useGetResidentsSuspenseQuery>;
-export type GetResidentsQueryResult = Apollo.QueryResult<GetResidentsQuery, GetResidentsQueryVariables>;
