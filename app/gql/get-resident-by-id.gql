@@ -1,0 +1,11 @@
+query GetResidentById($id: ID!) {
+  character(id: $id) {
+    id
+    ...character
+    episodes: episode {
+      id
+      episode
+      name
+    }
+  }
+}

@@ -1,0 +1,18 @@
+query GetLocations($name: String, $page: Int, $type: String) {
+  locations(page: $page, filter: {
+    name: $name, type: $type
+  }) {
+    info {
+      count
+      next
+      prev
+      pages
+    }
+    results {
+      id
+      name
+      type
+      created
+    }
+  }
+}

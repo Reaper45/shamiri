@@ -1,0 +1,10 @@
+fragment character on Character {
+  id
+  name
+  type
+  created
+  status
+  gender
+  image
+  species
+}
