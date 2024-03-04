@@ -2,17 +2,38 @@
 
 import { format } from 'date-fns';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGetResidentByIdQuery } from '../../gql/types';
+import NoteModal from '../../components/NoteModal';
+
+const storeKey = 'shamiri:notes';
 
 const Page = ({
   params: { characterId }
 }: {
   params: { characterId: string };
 }) => {
+  const [notesState, setNoteState] = useState([]);
+
   const { data, loading } = useGetResidentByIdQuery({
     variables: { id: characterId }
   });
+
+  const onNoteSave = (note: string) => {
+    const data = sessionStorage.getItem(storeKey);
+
+    let updatedNotes;
+
+    if (data) {
+      updatedNotes = JSON.parse(data);
+      updatedNotes?.push(note);
+    } else {
+      updatedNotes = [note];
+    }
+
+    setNoteState(updatedNotes);
+    sessionStorage.setItem(storeKey, JSON.stringify(updatedNotes));
+  };
 
   return (
     <div>
@@ -27,9 +48,7 @@ const Page = ({
           <div className='flex flex-row	justify-between'>
             <div className='flex flex-row	gap-x-4 items-center'>
               <div className='w-16 h-16 bg-slate-200 rounded-md flex justify-center items-center'>
-                {loading ? (
-                  <div className='h-16 w-16 bg-gray-300 rounded-full'></div>
-                ) : (
+                {!loading && (
                   <Image
                     width={80}
                     height={80}
@@ -117,44 +136,26 @@ const Page = ({
                 </div>
               </div>
             </div>
+            <div>
+              <NoteModal onSave={onNoteSave} />
+            </div>
           </div>
         </div>
 
         <div className='mb-6 flex gap-x-3 items-center mt-8'>
-          <p className='text-slate-700 font-semibold'>Episodes</p>
+          <p className='text-slate-700 font-semibold'>Notes</p>
         </div>
 
-        <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-          {loading
-            ? Array.from(Array(4).keys()).map((item) => (
-                <div
-                  className='max-w-sm bg-white border border-gray-200 rounded-lg h-32'
-                  key={item}
-                >
-                  <div className='p-5'>
-                    <div className='h-4 bg-gray-300 rounded-full w-64 mb-6'></div>
-                    <div className='h-3 bg-gray-200 rounded-full w-24'></div>
-                  </div>
-                </div>
-              ))
-            : data?.character?.episodes.map((episode) => (
-                <div
-                  className='max-w-sm bg-white border border-gray-200 rounded-lg'
-                  key={episode?.id}
-                >
-                  <div className='p-5'>
-                    <a href='#'>
-                      <h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900'>
-                        {episode?.name}
-                      </h5>
-                    </a>
-                    <p className='mb-3 font-normal text-gray-700'>
-                      {episode?.name}
-                    </p>
-                  </div>
-                </div>
-              ))}
-        </div>
+        <ul>
+          {notesState?.map((note) => (
+            <li
+              className='w-full bg-white border border-gray-200 rounded-lg p-5 mb-4'
+              key={note}
+            >
+              {note}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
